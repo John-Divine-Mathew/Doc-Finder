@@ -36,7 +36,7 @@ const SearchBar = ({
         />
 
         <button
-          className="
+          className=" 
             primary-btn
           "
         >

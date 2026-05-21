@@ -226,7 +226,7 @@ const Dashboard = () => {
       {/* SUPPORT */}
       <SupportModal
         showSupport={showSupport}
-        setShowSupport={setShowSupport}
+        setShowSupport={setShowSupport}l
       />
 
     </div>
