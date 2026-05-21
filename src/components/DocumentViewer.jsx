@@ -1,111 +1,143 @@
-const DocumentViewer = ({ selectedDoc, onClose }) => {
+import { motion, AnimatePresence } from "framer-motion";
 
-  if (!selectedDoc) return null;
+const DocumentViewer = ({
+  selectedDoc,
+  onClose,
+}) => {
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+    <AnimatePresence>
 
-      <div
-        className="
-          bg-white
-          w-full
-          max-w-6xl
-          h-[90vh]
-          rounded-3xl
-          shadow-2xl
-          overflow-hidden
-          flex
-          flex-col
-        "
-      >
+      {selectedDoc && (
 
-        {/* HEADER */}
-        <div
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           className="
-            border-b
-            border-gray-200
-            px-8
-            py-5
+            fixed
+            inset-0
+            bg-black/40
+            backdrop-blur-sm
+            z-50
             flex
             items-center
-            justify-between
-            bg-white
+            justify-center
+            p-6
           "
         >
 
-          {/* LEFT */}
-          <div>
-
-            <h2 className="text-xl font-semibold text-gray-800">
-              {selectedDoc.name}
-            </h2>
-
-            <p className="text-sm text-gray-500 mt-1">
-              {selectedDoc.owner} • {selectedDoc.size}
-            </p>
-
-          </div>
-
-          {/* RIGHT */}
-          <div className="flex items-center gap-3">
-
-            <a
-              href={selectedDoc.url}
-              download
-              className="
-                px-5
-                py-3
-                rounded-xl
-                bg-gray-900
-                text-white
-                text-sm
-                hover:bg-black
-                transition-all
-              "
-            >
-              Download
-            </a>
-
-            <button
-              onClick={onClose}
-              className="
-                px-5
-                py-3
-                rounded-xl
-                border
-                border-gray-300
-                hover:bg-gray-100
-                transition-all
-              "
-            >
-              Close
-            </button>
-
-          </div>
-
-        </div>
-
-        {/* PDF PREVIEW */}
-        <div className="flex-1 bg-gray-100 p-5 overflow-hidden">
-
-          <iframe
-            src={selectedDoc.url}
-            title="preview"
+          <motion.div
+            initial={{
+              scale: 0.94,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+            }}
+            exit={{
+              scale: 0.94,
+              opacity: 0,
+            }}
             className="
-              w-full
-              h-full
-              rounded-2xl
-              border
-              border-gray-200
               bg-white
+              w-full
+              max-w-7xl
+              h-[92vh]
+              rounded-3xl
+              overflow-hidden
+              soft-shadow
+              flex
+              flex-col
             "
-          />
+          >
 
-        </div>
+            {/* HEADER */}
+            <div
+              className="
+                px-8
+                py-5
+                border-b
+                border-gray-100
+                flex
+                items-center
+                justify-between
+              "
+            >
 
-      </div>
+              <div>
 
-    </div>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {selectedDoc.name}
+                </h2>
+
+                <p className="text-sm text-gray-500 mt-1">
+                  {selectedDoc.owner}
+                </p>
+
+              </div>
+
+              <div className="flex items-center gap-3">
+
+                <a
+                  href={selectedDoc.url}
+                  download
+                  className="
+                    px-5
+                    py-3
+                    rounded-2xl
+                    bg-blue-600
+                    text-white
+                    text-sm
+                    font-medium
+                  "
+                >
+                  Download
+                </a>
+
+                <button
+                  onClick={onClose}
+                  className="
+                    px-5
+                    py-3
+                    rounded-2xl
+                    border
+                    border-gray-200
+                    hover:bg-gray-50
+                  "
+                >
+                  Close
+                </button>
+
+              </div>
+
+            </div>
+
+            {/* PDF */}
+            <div className="flex-1 bg-gray-100 p-5">
+
+              <iframe
+                src={selectedDoc.url}
+                title="preview"
+                className="
+                  w-full
+                  h-full
+                  rounded-2xl
+                  bg-white
+                  border
+                  border-gray-200
+                "
+              />
+
+            </div>
+
+          </motion.div>
+
+        </motion.div>
+      )}
+
+    </AnimatePresence>
   );
 };
 

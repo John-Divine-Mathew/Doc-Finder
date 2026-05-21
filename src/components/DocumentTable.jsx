@@ -1,21 +1,28 @@
-const DocumentTable = ({ documents, onSelect }) => {
+import { motion } from "framer-motion";
+
+const DocumentTable = ({
+  documents,
+  onSelect,
+}) => {
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       className="
-        bg-white
+        glass-card
         border
-        border-gray-200
-        rounded-2xl
-        shadow-sm
+        border-white/50
+        rounded-3xl
+        soft-shadow
         overflow-hidden
       "
     >
 
       {/* HEADER */}
-      <div className="px-6 py-5 border-b bg-gray-50">
+      <div className="px-8 py-6 border-b border-gray-100">
 
-        <h2 className="text-lg font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-gray-800">
           Company Documents
         </h2>
 
@@ -26,27 +33,27 @@ const DocumentTable = ({ documents, onSelect }) => {
 
         <table className="w-full">
 
-          <thead className="bg-white border-b">
+          <thead className="bg-white/60">
 
             <tr className="text-left text-sm text-gray-500">
 
-              <th className="px-6 py-4 font-medium">
+              <th className="px-8 py-5 font-medium">
                 File Name
               </th>
 
-              <th className="px-6 py-4 font-medium">
+              <th className="px-8 py-5 font-medium">
                 Type
               </th>
 
-              <th className="px-6 py-4 font-medium">
+              <th className="px-8 py-5 font-medium">
                 Owner
               </th>
 
-              <th className="px-6 py-4 font-medium">
+              <th className="px-8 py-5 font-medium">
                 Uploaded
               </th>
 
-              <th className="px-6 py-4 font-medium">
+              <th className="px-8 py-5 font-medium">
                 Size
               </th>
 
@@ -58,39 +65,41 @@ const DocumentTable = ({ documents, onSelect }) => {
 
             {documents.map((doc) => (
 
-              <tr
+              <motion.tr
+                whileHover={{
+                  backgroundColor:
+                    "rgba(248,250,252,1)",
+                }}
                 key={doc.id}
                 onClick={() => onSelect(doc)}
                 className="
-                  border-b
-                  hover:bg-gray-50
-                  transition-all
-                  duration-200
+                  border-t
+                  border-gray-100
                   cursor-pointer
                 "
               >
 
-                <td className="px-6 py-5 font-medium text-gray-800">
+                <td className="px-8 py-6 font-medium text-gray-800">
                   {doc.name}
                 </td>
 
-                <td className="px-6 py-5 text-gray-600">
+                <td className="px-8 py-6 text-gray-600">
                   {doc.type}
                 </td>
 
-                <td className="px-6 py-5 text-gray-600">
+                <td className="px-8 py-6 text-gray-600">
                   {doc.owner}
                 </td>
 
-                <td className="px-6 py-5 text-gray-600">
+                <td className="px-8 py-6 text-gray-600">
                   {doc.uploadDate}
                 </td>
 
-                <td className="px-6 py-5 text-gray-600">
+                <td className="px-8 py-6 text-gray-600">
                   {doc.size}
                 </td>
 
-              </tr>
+              </motion.tr>
 
             ))}
 
@@ -100,8 +109,8 @@ const DocumentTable = ({ documents, onSelect }) => {
 
       </div>
 
-    </div>
+    </motion.div>
   );
 };
 
-export default DocumentTable; 
+export default DocumentTable;

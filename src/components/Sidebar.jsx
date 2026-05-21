@@ -1,4 +1,9 @@
-const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
+import { motion, AnimatePresence } from "framer-motion";
+
+const Sidebar = ({
+  sidebarOpen,
+  setSidebarOpen,
+}) => {
 
   const menus = [
     "Dashboard",
@@ -7,71 +12,91 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     "Favorites",
     "Shared Files",
     "Uploads",
-    "System Manager Access",
+    "System Access",
     "Settings",
   ];
 
   return (
-    <>
-      {/* OVERLAY */}
-      <div
-        onClick={() => setSidebarOpen(false)}
-        className={`
-          fixed inset-0 bg-black/30 backdrop-blur-[2px] z-30 transition-all duration-300
+    <AnimatePresence>
 
-          ${sidebarOpen
-            ? "opacity-100 visible"
-            : "opacity-0 invisible"
-          }
-        `}
-      />
+      {sidebarOpen && (
 
-      {/* SIDEBAR */}
-      <div
-        className={`
-          fixed top-16 left-0 h-[calc(100vh-64px)] w-64 bg-white border-r border-gray-200 z-40 shadow-xl transition-all duration-300 ease-in-out
+        <>
+          {/* OVERLAY */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="
+              fixed
+              inset-0
+              bg-black/20
+              backdrop-blur-[2px]
+              z-40
+            "
+          />
 
-          ${sidebarOpen
-            ? "translate-x-0"
-            : "-translate-x-full"
-          }
-        `}
-      >
+          {/* SIDEBAR */}
+          <motion.div
+            initial={{ x: -320 }}
+            animate={{ x: 0 }}
+            exit={{ x: -320 }}
+            transition={{
+              type: "spring",
+              damping: 24,
+            }}
+            className="
+              fixed
+              top-24
+              left-6
+              bottom-6
+              w-72
+              rounded-3xl
+              glass-card
+              border
+              border-white/50
+              soft-shadow
+              z-50
+              overflow-hidden
+            "
+          >
 
-        {/* MENU */}
-        <div className="p-5">
+            <div className="p-6">
 
-          <div className="space-y-2">
+              <div className="space-y-2">
 
-            {menus.map((menu, index) => (
+                {menus.map((menu, index) => (
 
-              <button
-                key={index}
-                className="
-                  w-full
-                  text-left
-                  px-4
-                  py-3
-                  rounded-xl
-                  text-gray-700
-                  font-medium
-                  hover:bg-gray-100
-                  hover:translate-x-1
-                  transition-all
-                  duration-200
-                "
-              >
-                {menu}
-              </button>
+                  <motion.button
+                    key={index}
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="
+                      w-full
+                      text-left
+                      px-5
+                      py-4
+                      rounded-2xl
+                      text-gray-700
+                      font-medium
+                      hover:bg-white
+                    "
+                  >
+                    {menu}
+                  </motion.button>
 
-            ))}
+                ))}
 
-          </div>
+              </div>
 
-        </div>
+            </div>
 
-      </div>
-    </>
+          </motion.div>
+        </>
+      )}
+
+    </AnimatePresence>
   );
 };
 
