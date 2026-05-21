@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1d4ed8;
+  --success:#10b981;
+  --danger:#ef4444;
+  --bg:#f4f8ff;
+  --card:rgba(255,255,255,0.82);
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+}
+
 *{
   margin:0;
   padding:0;
@@ -11,20 +23,108 @@ html{
 }
 
 body{
-  font-family: Inter, sans-serif;
-  background:#f4f7fb;
-  color:#111827;
+  font-family:'Inter',sans-serif;
+  background:
+    linear-gradient(
+      135deg,
+      #f8fbff,
+      #eef4ff,
+      #f8fbff
+    );
+
+  color:var(--text);
+
+  overflow-x:hidden;
 }
 
-/* SMOOTH TRANSITIONS */
+/* GLOBAL TRANSITION */
 
 *{
   transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease,
-    opacity 0.25s ease;
+    background-color .28s ease,
+    border-color .28s ease,
+    transform .28s ease,
+    box-shadow .28s ease,
+    opacity .28s ease;
+}
+
+/* GLASS */
+
+.glass{
+  background:var(--card);
+
+  backdrop-filter:blur(16px);
+
+  -webkit-backdrop-filter:blur(16px);
+}
+
+/* SHADOW */
+
+.soft-shadow{
+  box-shadow:
+    0 24px 70px rgba(15,23,42,0.08);
+}
+
+/* PREMIUM BORDER */
+
+.premium-border{
+  border:1px solid rgba(255,255,255,0.55);
+}
+
+/* INPUT */
+
+.input-style{
+  width:100%;
+  height:58px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:white;
+  padding:0 22px;
+  outline:none;
+  font-size:15px;
+  color:var(--text);
+}
+
+.input-style:focus{
+  border-color:var(--primary);
+
+  box-shadow:
+    0 0 0 4px rgba(37,99,235,0.10);
+}
+
+/* BUTTON */
+
+.primary-btn{
+  height:58px;
+  padding:0 28px;
+  border:none;
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary),
+      var(--primary-dark)
+    );
+
+  color:white;
+
+  font-weight:600;
+
+  cursor:pointer;
+}
+
+.primary-btn:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 20px 40px rgba(37,99,235,0.18);
+}
+
+/* CARD HOVER */
+
+.card-hover:hover{
+  transform:translateY(-4px);
 }
 
 /* SCROLLBAR */
@@ -35,27 +135,5 @@ body{
 
 ::-webkit-scrollbar-thumb{
   background:#cbd5e1;
-  border-radius:10px;
-}
-
-/* GLASS EFFECT */
-
-.glass-card{
-  background:rgba(255,255,255,0.75);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-}
-
-/* PREMIUM SHADOW */
-
-.soft-shadow{
-  box-shadow:
-    0 4px 30px rgba(15,23,42,0.06);
-}
-
-/* BUTTON GLOW */
-
-.glow-button:hover{
-  box-shadow:
-    0 0 0 4px rgba(59,130,246,0.12);
+  border-radius:20px;
 }

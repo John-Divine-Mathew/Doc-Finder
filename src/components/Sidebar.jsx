@@ -1,102 +1,208 @@
-import { motion, AnimatePresence } from "framer-motion";
-
 const Sidebar = ({
   sidebarOpen,
   setSidebarOpen,
+  setShowSupport,
 }) => {
 
   const menus = [
     "Dashboard",
     "All Documents",
+    "PDF Files",
+    "Word Files",
+    "Excel Files",
+    "PPT Files",
     "Recent Files",
-    "Favorites",
-    "Shared Files",
-    "Uploads",
-    "System Access",
     "Settings",
   ];
 
-  return (
-    <AnimatePresence>
+  const logout = () => {
 
+    localStorage.clear();
+
+    window.location.reload();
+  };
+
+  return (
+    <>
+      {/* OVERLAY */}
       {sidebarOpen && (
 
-        <>
-          {/* OVERLAY */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-            className="
-              fixed
-              inset-0
-              bg-black/20
-              backdrop-blur-[2px]
-              z-40
-            "
-          />
+        <div
+          onClick={() =>
+            setSidebarOpen(false)
+          }
+          className="
+            fixed
+            inset-0
+            bg-black/20
+            backdrop-blur-sm
+            z-40
+          "
+        />
 
-          {/* SIDEBAR */}
-          <motion.div
-            initial={{ x: -320 }}
-            animate={{ x: 0 }}
-            exit={{ x: -320 }}
-            transition={{
-              type: "spring",
-              damping: 24,
-            }}
+      )}
+
+      {/* SIDEBAR */}
+      <aside
+        className={`
+          fixed
+          top-0
+          left-0
+          h-full
+          w-80
+          bg-white
+          border-r
+          border-gray-200
+          z-50
+          flex
+          flex-col
+          justify-between
+          transform
+          transition-transform
+          duration-300
+          ${
+            sidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full"
+          }
+        `}
+      >
+
+        {/* TOP */}
+        <div>
+
+          {/* HEADER */}
+          <div
             className="
-              fixed
-              top-24
-              left-6
-              bottom-6
-              w-72
-              rounded-3xl
-              glass-card
-              border
-              border-white/50
-              soft-shadow
-              z-50
-              overflow-hidden
+              h-20
+              border-b
+              border-gray-200
+              px-6
+              flex
+              items-center
             "
           >
 
-            <div className="p-6">
+            <div
+              className="
+                flex
+                items-center
+                gap-4
+              "
+            >
 
-              <div className="space-y-2">
+              <div
+                className="
+                  w-12
+                  h-12
+                  rounded-2xl
+                  bg-blue-600
+                  text-white
+                  flex
+                  items-center
+                  justify-center
+                  font-semibold
+                "
+              >
+                H
+              </div>
 
-                {menus.map((menu, index) => (
+              <div>
 
-                  <motion.button
-                    key={index}
-                    whileHover={{ x: 4 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="
-                      w-full
-                      text-left
-                      px-5
-                      py-4
-                      rounded-2xl
-                      text-gray-700
-                      font-medium
-                      hover:bg-white
-                    "
-                  >
-                    {menu}
-                  </motion.button>
+                <h2
+                  className="
+                    text-lg
+                    font-semibold
+                    text-gray-800
+                  "
+                >
+                  Doc-Finder
+                </h2>
 
-                ))}
+                <p
+                  className="
+                    text-sm
+                    text-gray-500
+                  "
+                >
+                  Enterprise System
+                </p>
 
               </div>
 
             </div>
 
-          </motion.div>
-        </>
-      )}
+          </div>
 
-    </AnimatePresence>
+          {/* MENUS */}
+          <div className="p-5 space-y-2">
+
+            {menus.map((menu, index) => (
+
+              <button
+                key={index}
+                className="
+                  w-full
+                  text-left
+                  px-5
+                  py-4
+                  rounded-2xl
+                  text-gray-700
+                  font-medium
+                  hover:bg-gray-100
+                "
+              >
+                {menu}
+              </button>
+
+            ))}
+
+          </div>
+
+        </div>
+
+        {/* BOTTOM */}
+        <div className="p-5 space-y-3">
+
+          {/* SUPPORT */}
+          <button
+            onClick={() =>
+              setShowSupport(true)
+            }
+            className="
+              w-full
+              h-14
+              rounded-2xl
+              border
+              border-gray-200
+              bg-white
+              font-medium
+              hover:bg-gray-50
+            "
+          >
+            Support
+          </button>
+
+          {/* LOGOUT */}
+          <button
+            onClick={logout}
+            className="
+              w-full
+              h-14
+              rounded-2xl
+              bg-gray-900
+              text-white
+              font-medium
+              hover:bg-black
+            "
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </aside>
+    </>
   );
 };
 

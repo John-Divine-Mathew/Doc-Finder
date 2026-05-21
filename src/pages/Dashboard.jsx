@@ -7,40 +7,32 @@ import UploadZone from "../components/UploadZone";
 import DocumentTable from "../components/DocumentTable";
 import DocumentViewer from "../components/DocumentViewer";
 import SupportModal from "../components/SupportModal";
-import Breadcrumb from "../components/Breadcrumb";
-import EmptyState from "../components/EmptyState";
 
 import { mockDocuments } from "../data/mockDocuments";
 
 const Dashboard = () => {
 
-  /* ======================================
-     LOCAL STORAGE
-  ====================================== */
+  const savedDocs =
+    localStorage.getItem("documents");
 
-  const savedDocs = localStorage.getItem("documents");
+  const [documents, setDocuments] =
+    useState(
+      savedDocs
+        ? JSON.parse(savedDocs)
+        : mockDocuments
+    );
 
-  const [documents, setDocuments] = useState(
-    savedDocs
-      ? JSON.parse(savedDocs)
-      : mockDocuments
-  );
+  const [search, setSearch] =
+    useState("");
 
-  /* ======================================
-     STATES
-  ====================================== */
+  const [selectedDoc, setSelectedDoc] =
+    useState(null);
 
-  const [search, setSearch] = useState("");
+  const [sidebarOpen, setSidebarOpen] =
+    useState(false);
 
-  const [selectedDoc, setSelectedDoc] = useState(null);
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const [showSupport, setShowSupport] = useState(false);
-
-  /* ======================================
-     SAVE DOCUMENTS
-  ====================================== */
+  const [showSupport, setShowSupport] =
+    useState(false);
 
   useEffect(() => {
 
@@ -51,132 +43,179 @@ const Dashboard = () => {
 
   }, [documents]);
 
-  /* ======================================
-     FILE UPLOAD
-  ====================================== */
+  /* UPLOAD */
 
   const handleUpload = (files) => {
 
-    const newDocs = files.map((file, index) => ({
+    const newDocs = files.map(
+      (file, index) => ({
 
-      id: Date.now() + index,
+        id: Date.now() + index,
 
-      name: file.name,
+        name: file.name,
 
-      type: file.name.split(".").pop().toUpperCase(),
+        type: file.name
+          .split(".")
+          .pop()
+          .toUpperCase(),
 
-      size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+        size:
+          (
+            file.size /
+            1024 /
+            1024
+          ).toFixed(2) + " MB",
 
-      owner: "Current User",
+        owner:"Current User",
 
-      uploadDate: new Date().toLocaleDateString(),
+        uploadDate:
+          new Date().toLocaleDateString(),
 
-      url: URL.createObjectURL(file),
+        url: URL.createObjectURL(file),
 
-    }));
+      })
+    );
 
-    setDocuments((prev) => [...newDocs, ...prev]);
+    setDocuments((prev) => [
+      ...newDocs,
+      ...prev,
+    ]);
   };
 
-  /* ======================================
-     SEARCH FILTER
-  ====================================== */
+  /* SEARCH */
 
-  const filteredDocs = documents.filter((doc) =>
-    doc.name
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
-
-  /* ======================================
-     MAIN UI
-  ====================================== */
+  const filteredDocs =
+    documents.filter((doc) =>
+      doc.name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
 
   return (
-    <div className="min-h-screen bg-[#f5f7fa] overflow-x-hidden">
+    <div className="min-h-screen bg-[#f4f7fb]">
 
       {/* NAVBAR */}
       <Navbar
         toggleSidebar={() =>
           setSidebarOpen(!sidebarOpen)
         }
-        sidebarOpen={sidebarOpen}
-        setShowSupport={setShowSupport}
       />
 
       {/* SIDEBAR */}
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
+        setShowSupport={setShowSupport}
       />
 
-      {/* MAIN CONTENT */}
-      <div className="pt-28 pb-14 px-6">
+      {/* MAIN */}
+      <main className="pt-28 pb-12 px-5">
 
-        {/* CENTER CONTAINER */}
-        <div className="max-w-7xl mx-auto flex flex-col gap-8">
+        <div className="max-w-6xl mx-auto">
 
-          {/* BREADCRUMB */}
-          <Breadcrumb />
-
-          {/* PAGE HEADER */}
-          <div
+          {/* HERO */}
+          <section
             className="
-              bg-white
-              border
-              border-gray-200
-              rounded-3xl
-              p-10
-              shadow-sm
+              glass
+              soft-shadow
+              premium-border
+              rounded-[30px]
+              px-8
+              py-10
               text-center
-              hover:shadow-md
-              transition-all
-              duration-300
             "
           >
 
-            <h1 className="text-4xl font-semibold text-gray-800 tracking-tight">
-              Enterprise Document Portal
+            <div
+              className="
+                inline-flex
+                items-center
+                px-4
+                py-2
+                rounded-full
+                bg-blue-50
+                text-blue-700
+                text-sm
+                font-medium
+                mb-5
+              "
+            >
+              Enterprise Management Platform
+            </div>
+
+            <h1
+              className="
+                text-3xl
+                md:text-5xl
+                font-semibold
+                tracking-tight
+                text-gray-800
+                leading-tight
+              "
+            >
+              HIROTEC
+              <br />
+              Document Portal
             </h1>
 
-            <p className="text-gray-500 mt-4 text-sm leading-relaxed max-w-2xl mx-auto">
-              Securely manage, upload, access and search
-              company documents through the HIROTEC
-              internal document management platform.
+            <p
+              className="
+                text-gray-500
+                mt-5
+                max-w-2xl
+                mx-auto
+                leading-relaxed
+              "
+            >
+              Professional enterprise
+              document management system
+              for secure document handling.
             </p>
+
+          </section>
+
+          {/* SEARCH */}
+          <div className="mt-8 flex justify-center">
+
+            <div className="w-full max-w-4xl">
+
+              <SearchBar
+                search={search}
+                setSearch={setSearch}
+              />
+
+            </div>
 
           </div>
 
-          {/* SEARCH BAR */}
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-          />
+          {/* UPLOAD */}
+          <div className="mt-8 flex justify-center">
 
-          {/* UPLOAD AREA */}
-          <UploadZone
-            onUpload={handleUpload}
-          />
+            <div className="w-full max-w-4xl">
 
-          {/* DOCUMENT TABLE */}
-          {filteredDocs.length > 0 ? (
+              <UploadZone
+                onUpload={handleUpload}
+              />
+
+            </div>
+
+          </div>
+
+          {/* TABLE */}
+          <div className="mt-8">
 
             <DocumentTable
               documents={filteredDocs}
               onSelect={setSelectedDoc}
             />
 
-          ) : (
-
-            <EmptyState />
-
-          )}
+          </div>
 
         </div>
 
-      </div>
+      </main>
 
-      {/* DOCUMENT VIEWER */}
+      {/* VIEWER */}
       <DocumentViewer
         selectedDoc={selectedDoc}
         onClose={() =>
@@ -184,7 +223,7 @@ const Dashboard = () => {
         }
       />
 
-      {/* SUPPORT MODAL */}
+      {/* SUPPORT */}
       <SupportModal
         showSupport={showSupport}
         setShowSupport={setShowSupport}
