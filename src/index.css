@@ -1,29 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-@import "tailwindcss";
 
-:root{
-
-  --bg:#f5f7fb;
-
-  --sidebar:#ffffff;
-
-  --card:#ffffff;
-
-  --text:#111827;
-
-  --muted:#6b7280;
-
-  --border:#e5e7eb;
-
-  --primary:#2563eb;
-
-  --primary-light:#eff6ff;
-
-  --shadow:
-    0 20px 60px rgba(15,23,42,0.08);
-
-  --radius:24px;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 *{
   margin:0;
@@ -32,124 +11,98 @@
   font-family:'Inter',sans-serif;
 }
 
-html{
-  scroll-behavior:smooth;
-}
-
 body{
-  background:var(--bg);
-  color:var(--text);
+  background:#f4f7fb;
   overflow-x:hidden;
 }
 
-/* SCROLLBAR */
+/* BACKGROUND ANIMATION */
 
-::-webkit-scrollbar{
-  width:5px;
+.bg-animation{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  z-index:-1;
 }
 
-::-webkit-scrollbar-thumb{
-  background:#cbd5e1;
-  border-radius:20px;
+/* LEFT GREEN */
+
+.bg-animation::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:520px;
+  height:520px;
+
+  background:
+    rgba(34,197,94,0.10);
+
+  border-radius:9999px;
+
+  filter:blur(120px);
+
+  left:-120px;
+  top:120px;
+
+  animation:floatGreen 10s ease-in-out infinite;
 }
 
-/* CARD */
+/* RIGHT ORANGE */
 
-.card{
-  background:var(--card);
+.bg-animation::after{
 
-  border:1px solid var(--border);
+  content:"";
 
-  border-radius:var(--radius);
+  position:absolute;
 
-  box-shadow:var(--shadow);
+  width:520px;
+  height:520px;
+
+  background:
+    rgba(249,115,22,0.10);
+
+  border-radius:9999px;
+
+  filter:blur(120px);
+
+  right:-120px;
+  top:180px;
+
+  animation:floatOrange 12s ease-in-out infinite;
 }
 
-/* BUTTON */
+/* GREEN FLOAT */
 
-.primary-btn{
+@keyframes floatGreen{
 
-  height:48px;
-
-  padding:0 20px;
-
-  border:none;
-
-  border-radius:16px;
-
-  background:var(--primary);
-
-  color:white;
-
-  font-weight:600;
-
-  transition:.25s ease;
-
-  cursor:pointer;
-}
-
-.primary-btn:hover{
-
-  transform:translateY(-2px);
-
-  box-shadow:
-    0 15px 30px rgba(37,99,235,0.20);
-}
-
-/* INPUT */
-
-.input{
-
-  width:100%;
-
-  height:52px;
-
-  border:1px solid var(--border);
-
-  border-radius:16px;
-
-  padding:0 18px;
-
-  outline:none;
-
-  background:white;
-
-  transition:.2s ease;
-}
-
-.input:focus{
-
-  border-color:var(--primary);
-
-  box-shadow:
-    0 0 0 4px rgba(37,99,235,0.10);
-}
-
-/* HOVER */
-
-.hover-lift{
-  transition:.25s ease;
-}
-
-.hover-lift:hover{
-  transform:translateY(-4px);
-}
-
-/* ANIMATION */
-
-.fade-in{
-  animation:fade .5s ease;
-}
-
-@keyframes fade{
-
-  from{
-    opacity:0;
-    transform:translateY(16px);
+  0%{
+    transform:translateY(0px);
   }
 
-  to{
-    opacity:1;
-    transform:translateY(0);
+  50%{
+    transform:translateY(30px);
+  }
+
+  100%{
+    transform:translateY(0px);
+  }
+}
+
+/* ORANGE FLOAT */
+
+@keyframes floatOrange{
+
+  0%{
+    transform:translateY(0px);
+  }
+
+  50%{
+    transform:translateY(-30px);
+  }
+
+  100%{
+    transform:translateY(0px);
   }
 }
