@@ -7,7 +7,6 @@ import {
   Sun,
   FileText,
   UploadCloud,
-  CircleHelp,
   LogOut,
   X,
 } from "lucide-react";
@@ -139,7 +138,7 @@ const Dashboard = () => {
             max-w-7xl
             mx-auto
             px-8
-            h-24
+            h-20
             flex
             items-center
             justify-between
@@ -152,15 +151,15 @@ const Dashboard = () => {
             className="
               flex
               items-center
-              gap-4
+              gap-3
             "
           >
 
             <div
               className="
-                w-14
-                h-14
-                rounded-2xl
+                w-11
+                h-11
+                rounded-xl
                 bg-gradient-to-br
                 from-green-500
                 to-green-600
@@ -169,8 +168,8 @@ const Dashboard = () => {
                 items-center
                 justify-center
                 font-bold
-                text-xl
-                shadow-lg
+                text-base
+                shadow-md
               "
             >
               H
@@ -180,8 +179,9 @@ const Dashboard = () => {
 
               <h1
                 className="
-                  text-2xl
-                  font-bold
+                  text-lg
+                  font-semibold
+                  tracking-tight
                 "
               >
                 HIROTEC INDIA
@@ -189,7 +189,7 @@ const Dashboard = () => {
 
               <p
                 className={`
-                  text-sm
+                  text-xs
                   ${
                     dark
                     ?
@@ -212,7 +212,7 @@ const Dashboard = () => {
             className="
               flex
               items-center
-              gap-4
+              gap-3
             "
           >
 
@@ -223,9 +223,9 @@ const Dashboard = () => {
                 setDark(!dark)
               }
               className={`
-                w-12
-                h-12
-                rounded-2xl
+                w-10
+                h-10
+                rounded-xl
                 flex
                 items-center
                 justify-center
@@ -244,9 +244,9 @@ const Dashboard = () => {
               {
                 dark
                 ?
-                <Sun size={18}/>
+                <Sun size={16}/>
                 :
-                <Moon size={18}/>
+                <Moon size={16}/>
               }
 
             </button>
@@ -258,16 +258,17 @@ const Dashboard = () => {
                 setSupportOpen(true)
               }
               className="
-                h-12
-                px-5
-                rounded-2xl
+                h-10
+                px-4
+                rounded-xl
                 bg-gradient-to-r
                 from-orange-400
                 to-orange-500
                 text-white
+                text-sm
                 font-medium
-                shadow-lg
-                hover:scale-[1.03]
+                shadow-md
+                hover:scale-[1.02]
                 transition-all
               "
             >
@@ -281,12 +282,13 @@ const Dashboard = () => {
                 window.location.reload()
               }
               className={`
-                h-12
-                px-5
-                rounded-2xl
+                h-10
+                px-4
+                rounded-xl
+                text-sm
                 font-medium
                 transition-all
-                hover:scale-[1.03]
+                hover:scale-[1.02]
                 ${
                   dark
                   ?
@@ -305,7 +307,7 @@ const Dashboard = () => {
                 "
               >
 
-                <LogOut size={17}/>
+                <LogOut size={15}/>
                 Logout
 
               </div>
@@ -322,10 +324,10 @@ const Dashboard = () => {
 
       <main
         className="
-          max-w-7xl
+          max-w-6xl
           mx-auto
-          px-8
-          py-12
+          px-6
+          py-10
         "
       >
 
@@ -333,12 +335,12 @@ const Dashboard = () => {
 
         <section
           className={`
-            rounded-[36px]
-            p-14
+            rounded-[28px]
+            p-10
             text-center
             border
             backdrop-blur-xl
-            shadow-[0_20px_60px_rgba(15,23,42,0.08)]
+            shadow-[0_20px_60px_rgba(15,23,42,0.06)]
             ${
               dark
               ?
@@ -351,7 +353,7 @@ const Dashboard = () => {
 
           <h1
             className="
-              text-5xl
+              text-4xl
               font-bold
               leading-tight
             "
@@ -363,10 +365,11 @@ const Dashboard = () => {
 
           <p
             className={`
-              max-w-3xl
+              max-w-2xl
               mx-auto
-              mt-6
-              text-lg
+              mt-4
+              text-sm
+              leading-7
               ${
                 dark
                 ?
@@ -376,9 +379,8 @@ const Dashboard = () => {
               }
             `}
           >
-            Securely manage company
-            documents with modern
-            enterprise technology.
+            Securely manage company documents
+            with modern enterprise technology.
           </p>
 
         </section>
@@ -387,7 +389,7 @@ const Dashboard = () => {
 
         <section
           className="
-            mt-10
+            mt-8
             flex
             justify-center
           "
@@ -396,16 +398,16 @@ const Dashboard = () => {
           <div
             className={`
               w-full
-              max-w-3xl
-              h-16
-              rounded-2xl
+              max-w-2xl
+              h-14
+              rounded-xl
               border
               flex
               items-center
-              px-5
-              gap-4
+              px-4
+              gap-3
               backdrop-blur-xl
-              shadow-lg
+              shadow-md
               ${
                 dark
                 ?
@@ -417,7 +419,7 @@ const Dashboard = () => {
           >
 
             <Search
-              size={20}
+              size={18}
               className="
                 text-gray-400
               "
@@ -430,11 +432,12 @@ const Dashboard = () => {
                 flex-1
                 bg-transparent
                 outline-none
+                text-sm
               "
             />
 
             <Bell
-              size={18}
+              size={16}
               className="
                 text-gray-400
               "
@@ -446,7 +449,7 @@ const Dashboard = () => {
 
         {/* DRAG DROP */}
 
-        <section className="mt-12">
+        <section className="mt-10">
 
           <div
             onDrop={handleDrop}
@@ -454,10 +457,10 @@ const Dashboard = () => {
               e.preventDefault()
             }
             className={`
-              rounded-[36px]
+              rounded-[28px]
               border-2
               border-dashed
-              p-16
+              p-12
               text-center
               backdrop-blur-xl
               hover:scale-[1.01]
@@ -476,14 +479,14 @@ const Dashboard = () => {
               className="
                 flex
                 justify-center
-                mb-6
+                mb-5
               "
             >
 
               <div
                 className="
-                  w-24
-                  h-24
+                  w-20
+                  h-20
                   rounded-full
                   bg-green-100
                   text-green-600
@@ -493,7 +496,7 @@ const Dashboard = () => {
                 "
               >
 
-                <UploadCloud size={38}/>
+                <UploadCloud size={32}/>
 
               </div>
 
@@ -501,8 +504,8 @@ const Dashboard = () => {
 
             <h2
               className="
-                text-3xl
-                font-bold
+                text-2xl
+                font-semibold
               "
             >
               Drag & Drop Files
@@ -510,15 +513,14 @@ const Dashboard = () => {
 
             <p
               className="
-                mt-4
+                mt-3
+                text-sm
                 text-gray-500
               "
             >
               Upload PDFs, Word,
               Excel and PPT files
             </p>
-
-            {/* HIDDEN INPUT */}
 
             <input
               type="file"
@@ -530,24 +532,23 @@ const Dashboard = () => {
               }
             />
 
-            {/* BUTTON */}
-
             <button
               onClick={() =>
                 fileInputRef.current.click()
               }
               className="
-                mt-8
-                h-12
-                px-7
-                rounded-2xl
+                mt-6
+                h-10
+                px-6
+                rounded-xl
                 bg-gradient-to-r
                 from-green-500
                 to-green-600
                 text-white
+                text-sm
                 font-medium
-                shadow-lg
-                hover:scale-[1.03]
+                shadow-md
+                hover:scale-[1.02]
                 transition-all
               "
             >
@@ -560,14 +561,14 @@ const Dashboard = () => {
 
         {/* DOCUMENTS */}
 
-        <section className="mt-12">
+        <section className="mt-10">
 
-          <div className="mb-7">
+          <div className="mb-5">
 
             <h2
               className="
-                text-3xl
-                font-bold
+                text-2xl
+                font-semibold
               "
             >
               Company Documents
@@ -575,7 +576,8 @@ const Dashboard = () => {
 
             <p
               className="
-                mt-2
+                mt-1
+                text-sm
                 text-gray-500
               "
             >
@@ -588,11 +590,11 @@ const Dashboard = () => {
 
           <div
             className={`
-              rounded-[36px]
+              rounded-[28px]
               overflow-hidden
               backdrop-blur-xl
               border
-              shadow-[0_20px_60px_rgba(15,23,42,0.08)]
+              shadow-[0_20px_60px_rgba(15,23,42,0.06)]
               ${
                 dark
                 ?
@@ -609,9 +611,9 @@ const Dashboard = () => {
               className="
                 grid
                 grid-cols-4
-                px-8
-                py-5
-                text-sm
+                px-6
+                py-4
+                text-xs
                 font-semibold
                 border-b
                 text-gray-500
@@ -634,8 +636,8 @@ const Dashboard = () => {
                 className="
                   grid
                   grid-cols-4
-                  px-8
-                  py-6
+                  px-6
+                  py-5
                   items-center
                   transition-all
                   hover:bg-white/40
@@ -646,15 +648,15 @@ const Dashboard = () => {
                   className="
                     flex
                     items-center
-                    gap-4
+                    gap-3
                   "
                 >
 
                   <div
                     className="
-                      w-12
-                      h-12
-                      rounded-2xl
+                      w-10
+                      h-10
+                      rounded-xl
                       bg-green-100
                       text-green-600
                       flex
@@ -663,13 +665,14 @@ const Dashboard = () => {
                     "
                   >
 
-                    <FileText size={20}/>
+                    <FileText size={18}/>
 
                   </div>
 
                   <h3
                     className="
-                      font-semibold
+                      font-medium
+                      text-sm
                     "
                   >
                     {doc.name}
@@ -677,9 +680,13 @@ const Dashboard = () => {
 
                 </div>
 
-                <div>{doc.type}</div>
+                <div className="text-sm">
+                  {doc.type}
+                </div>
 
-                <div>{doc.size}</div>
+                <div className="text-sm">
+                  {doc.size}
+                </div>
 
                 <div>
 
@@ -688,16 +695,17 @@ const Dashboard = () => {
                       openFile(doc)
                     }
                     className="
-                      h-11
-                      px-5
-                      rounded-xl
+                      h-9
+                      px-4
+                      rounded-lg
                       bg-gradient-to-r
                       from-green-500
                       to-green-600
                       text-white
+                      text-sm
                       font-medium
-                      shadow-md
-                      hover:scale-[1.03]
+                      shadow-sm
+                      hover:scale-[1.02]
                       transition-all
                     "
                   >
@@ -737,9 +745,9 @@ const Dashboard = () => {
           <div
             className={`
               w-full
-              max-w-lg
-              rounded-[36px]
-              p-10
+              max-w-md
+              rounded-[28px]
+              p-8
               relative
               shadow-[0_20px_60px_rgba(15,23,42,0.15)]
               ${
@@ -752,16 +760,18 @@ const Dashboard = () => {
             `}
           >
 
+            {/* CLOSE */}
+
             <button
               onClick={() =>
                 setSupportOpen(false)
               }
               className="
                 absolute
-                right-5
-                top-5
-                w-10
-                h-10
+                right-4
+                top-4
+                w-8
+                h-8
                 rounded-full
                 hover:bg-gray-100
                 flex
@@ -770,59 +780,121 @@ const Dashboard = () => {
               "
             >
 
-              <X size={18}/>
+              <X size={16}/>
 
             </button>
 
             <h2
               className="
-                text-3xl
-                font-bold
-                mb-8
+                text-2xl
+                font-semibold
+                mb-2
               "
             >
-              Support Team
+              Support Details
             </h2>
+
+            <p
+              className="
+                text-sm
+                text-gray-500
+                mb-6
+                leading-6
+              "
+            >
+              Contact the HIROTEC Support Team
+              for technical assistance.
+            </p>
 
             <div className="space-y-5">
 
               <div>
-                <p className="text-sm text-gray-400">
+
+                <p className="text-xs text-gray-400">
                   Developer
                 </p>
-                <h3 className="font-semibold">
+
+                <h3 className="text-sm font-medium mt-1">
                   JOHN DIVINE MATHEW J
                 </h3>
+
               </div>
 
               <div>
-                <p className="text-sm text-gray-400">
+
+                <p className="text-xs text-gray-400">
                   Email
                 </p>
-                <h3 className="font-semibold">
+
+                <h3 className="text-sm font-medium mt-1">
                   mathewdivine95@gmail.com
                 </h3>
+
               </div>
 
               <div>
-                <p className="text-sm text-gray-400">
+
+                <p className="text-xs text-gray-400">
                   Phone & WhatsApp
                 </p>
-                <h3 className="font-semibold">
+
+                <h3 className="text-sm font-medium mt-1">
                   +91 9626749641
                 </h3>
+
               </div>
 
               <div>
-                <p className="text-sm text-gray-400">
+
+                <p className="text-xs text-gray-400">
                   Department
                 </p>
-                <h3 className="font-semibold">
+
+                <h3 className="text-sm font-medium mt-1">
                   Automation Team
                 </h3>
+
+              </div>
+
+              <div>
+
+                <p className="text-xs text-gray-400">
+                  Working Hours
+                </p>
+
+                <h3 className="text-sm font-medium mt-1 leading-6">
+                  9:00 AM - 6:00 PM from Monday to Friday
+                  <br />
+                </h3>
+
               </div>
 
             </div>
+
+            {/* CLOSE BUTTON */}
+
+            <button
+              onClick={() =>
+                setSupportOpen(false)
+              }
+              className="
+                mt-8
+                w-full
+                h-10
+                rounded-xl
+                bg-gradient-to-r
+                from-orange-400
+                to-orange-500
+                text-white
+                text-sm
+                font-medium
+                shadow-md
+                hover:scale-[1.01]
+                transition-all
+              "
+            >
+              Close
+            </button>
 
           </div>
 
