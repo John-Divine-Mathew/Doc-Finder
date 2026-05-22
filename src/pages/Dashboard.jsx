@@ -1,161 +1,511 @@
-import { useState, useEffect } from "react";
+import {
+  Menu,
+  Search,
+  Bell,
+  FileText,
+  LayoutDashboard,
+  FolderOpen,
+  Settings,
+  CircleHelp,
+  LogOut,
+} from "lucide-react";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import SearchBar from "../components/SearchBar";
-import UploadZone from "../components/UploadZone";
-import DocumentTable from "../components/DocumentTable";
-import DocumentViewer from "../components/DocumentViewer";
-import SupportModal from "../components/SupportModal";
-
-import { mockDocuments } from "../data/mockDocuments";
+import { useState } from "react";
 
 const Dashboard = () => {
 
-  const savedDocs =
-    localStorage.getItem("documents");
+  const [open,setOpen] =
+    useState(true);
 
-  const [documents, setDocuments] =
-    useState(
-      savedDocs
-        ? JSON.parse(savedDocs)
-        : mockDocuments
-    );
+  const documents = [
 
-  const [search, setSearch] =
-    useState("");
+    {
+      name:"Manufacturing_Report.pdf",
+      size:"2.4 MB",
+      type:"PDF",
+    },
 
-  const [selectedDoc, setSelectedDoc] =
-    useState(null);
+    {
+      name:"Employee_Data.xlsx",
+      size:"1.2 MB",
+      type:"Excel",
+    },
 
-  const [sidebarOpen, setSidebarOpen] =
-    useState(false);
+    {
+      name:"Automation_Process.docx",
+      size:"1.9 MB",
+      type:"Word",
+    },
 
-  const [showSupport, setShowSupport] =
-    useState(false);
+    {
+      name:"Project_Presentation.pptx",
+      size:"4.8 MB",
+      type:"PPT",
+    },
 
-  useEffect(() => {
+  ];
 
-    localStorage.setItem(
-      "documents",
-      JSON.stringify(documents)
-    );
+  const menus = [
 
-  }, [documents]);
+    {
+      icon:<LayoutDashboard size={18}/>,
+      name:"Dashboard",
+    },
 
-  /* UPLOAD */
+    {
+      icon:<FolderOpen size={18}/>,
+      name:"Documents",
+    },
 
-  const handleUpload = (files) => {
+    {
+      icon:<FileText size={18}/>,
+      name:"Reports",
+    },
 
-    const newDocs = files.map(
-      (file, index) => ({
+    {
+      icon:<Settings size={18}/>,
+      name:"Settings",
+    },
 
-        id: Date.now() + index,
-
-        name: file.name,
-
-        type: file.name
-          .split(".")
-          .pop()
-          .toUpperCase(),
-
-        size:
-          (
-            file.size /
-            1024 /
-            1024
-          ).toFixed(2) + " MB",
-
-        owner:"Current User",
-
-        uploadDate:
-          new Date().toLocaleDateString(),
-
-        url: URL.createObjectURL(file),
-
-      })
-    );
-
-    setDocuments((prev) => [
-      ...newDocs,
-      ...prev,
-    ]);
-  };
-
-  /* SEARCH */
-
-  const filteredDocs =
-    documents.filter((doc) =>
-      doc.name
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
+  ];
 
   return (
-    <div className="min-h-screen bg-[#f4f7fb]">
 
-      {/* NAVBAR */}
-      <Navbar
-        toggleSidebar={() =>
-          setSidebarOpen(!sidebarOpen)
-        }
-      />
+    <div className="flex min-h-screen">
 
       {/* SIDEBAR */}
-      <Sidebar
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-        setShowSupport={setShowSupport}
-      />
 
-      {/* MAIN */}
-      <main className="pt-28 pb-12 px-5">
+      <aside
+        className={`
+          bg-white
+          border-r
+          border-gray-200
+          h-screen
+          fixed
+          left-0
+          top-0
+          z-50
+          transition-all
+          duration-300
+          flex
+          flex-col
+          justify-between
+          ${
+            open
+            ?
+            "w-[270px]"
+            :
+            "w-[88px]"
+          }
+        `}
+      >
 
-        <div className="max-w-6xl mx-auto">
+        {/* TOP */}
 
-          {/* HERO */}
-          <section
+        <div>
+
+          {/* LOGO */}
+
+          <div
             className="
-              glass
-              soft-shadow
-              premium-border
-              rounded-[30px]
-              px-8
-              py-10
-              text-center
+              h-24
+              px-6
+              border-b
+              border-gray-100
+              flex
+              items-center
+              justify-between
             "
           >
 
             <div
               className="
-                inline-flex
+                flex
                 items-center
-                px-4
-                py-2
-                rounded-full
-                bg-blue-50
-                text-blue-700
-                text-sm
-                font-medium
-                mb-5
+                gap-4
               "
             >
-              Enterprise Management Platform
+
+              <div
+                className="
+                  w-12
+                  h-12
+                  rounded-2xl
+                  bg-blue-600
+                  text-white
+                  flex
+                  items-center
+                  justify-center
+                  font-semibold
+                  text-lg
+                "
+              >
+                H
+              </div>
+
+              {open && (
+
+                <div>
+
+                  <h1
+                    className="
+                      text-lg
+                      font-semibold
+                    "
+                  >
+                    Doc-Finder
+                  </h1>
+
+                  <p
+                    className="
+                      text-sm
+                      text-gray-400
+                    "
+                  >
+                    HIROTEC Enterprise
+                  </p>
+
+                </div>
+
+              )}
+
             </div>
+
+            <button
+              onClick={() =>
+                setOpen(!open)
+              }
+              className="
+                w-10
+                h-10
+                rounded-xl
+                hover:bg-gray-100
+                flex
+                items-center
+                justify-center
+              "
+            >
+
+              <Menu size={18}/>
+
+            </button>
+
+          </div>
+
+          {/* MENUS */}
+
+          <div className="p-4 space-y-2">
+
+            {menus.map((item,index)=>(
+
+              <button
+                key={index}
+                className={`
+                  w-full
+                  h-14
+                  px-4
+                  rounded-2xl
+                  flex
+                  items-center
+                  gap-4
+                  transition-all
+                  ${
+                    index===0
+                    ?
+                    "bg-blue-600 text-white"
+                    :
+                    "hover:bg-gray-100 text-gray-600"
+                  }
+                `}
+              >
+
+                {item.icon}
+
+                {open && item.name}
+
+              </button>
+
+            ))}
+
+          </div>
+
+        </div>
+
+        {/* SUPPORT */}
+
+        <div
+          className="
+            p-4
+            border-t
+            border-gray-100
+          "
+        >
+
+          {/* SUPPORT CARD */}
+
+          {open && (
+
+            <div
+              className="
+                card
+                p-5
+                mb-4
+                bg-blue-50
+                border-blue-100
+              "
+            >
+
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-3
+                  mb-4
+                "
+              >
+
+                <div
+                  className="
+                    w-12
+                    h-12
+                    rounded-2xl
+                    bg-blue-600
+                    text-white
+                    flex
+                    items-center
+                    justify-center
+                  "
+                >
+
+                  <CircleHelp size={20}/>
+
+                </div>
+
+                <div>
+
+                  <h3
+                    className="
+                      font-semibold
+                    "
+                  >
+                    Support
+                  </h3>
+
+                  <p
+                    className="
+                      text-sm
+                      text-gray-500
+                    "
+                  >
+                    Automation Team
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="space-y-2 text-sm">
+
+                <p>
+                  <span className="font-medium">
+                    Developer:
+                  </span>
+                  {" "}
+                  JOHN DIVINE MATHEW
+                </p>
+
+                <p>
+                  <span className="font-medium">
+                    Email:
+                  </span>
+                  {" "}
+                  mathewdivine95@gmail.com
+                </p>
+
+                <p>
+                  <span className="font-medium">
+                    Hours:
+                  </span>
+                  {" "}
+                  Mon - Fri
+                </p>
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* LOGOUT */}
+
+          <button
+            className="
+              w-full
+              h-14
+              rounded-2xl
+              border
+              border-gray-200
+              flex
+              items-center
+              justify-center
+              gap-3
+              hover:bg-gray-50
+            "
+          >
+
+            <LogOut size={18}/>
+
+            {open && "Logout"}
+
+          </button>
+
+        </div>
+
+      </aside>
+
+      {/* MAIN */}
+
+      <main
+        className={`
+          flex-1
+          transition-all
+          duration-300
+          ${
+            open
+            ?
+            "ml-[270px]"
+            :
+            "ml-[88px]"
+          }
+        `}
+      >
+
+        {/* NAVBAR */}
+
+        <header
+          className="
+            h-24
+            px-8
+            bg-white/80
+            backdrop-blur-xl
+            border-b
+            border-gray-200
+            flex
+            items-center
+            justify-between
+            sticky
+            top-0
+            z-40
+          "
+        >
+
+          {/* SEARCH */}
+
+          <div
+            className="
+              flex
+              items-center
+              gap-4
+              w-full
+              max-w-[420px]
+            "
+          >
+
+            <div
+              className="
+                relative
+                flex-1
+              "
+            >
+
+              <Search
+                size={18}
+                className="
+                  absolute
+                  left-4
+                  top-1/2
+                  -translate-y-1/2
+                  text-gray-400
+                "
+              />
+
+              <input
+                type="text"
+                placeholder="Search documents..."
+                className="
+                  input
+                  pl-11
+                "
+              />
+
+            </div>
+
+          </div>
+
+          {/* RIGHT */}
+
+          <div
+            className="
+              flex
+              items-center
+              gap-4
+            "
+          >
+
+            <button
+              className="
+                w-12
+                h-12
+                rounded-2xl
+                border
+                border-gray-200
+                flex
+                items-center
+                justify-center
+                hover:bg-gray-50
+              "
+            >
+
+              <Bell size={18}/>
+
+            </button>
+
+            <button
+              className="
+                primary-btn
+              "
+            >
+              Upload
+            </button>
+
+          </div>
+
+        </header>
+
+        {/* CONTENT */}
+
+        <div className="p-8">
+
+          {/* HERO */}
+
+          <section
+            className="
+              card
+              p-10
+              fade-in
+            "
+          >
 
             <h1
               className="
-                text-3xl
-                md:text-5xl
+                text-4xl
                 font-semibold
-                tracking-tight
-                text-gray-800
                 leading-tight
               "
             >
-              HIROTEC
+              Enterprise
               <br />
-              Document Portal
+              Document Management
             </h1>
 
             <p
@@ -163,71 +513,285 @@ const Dashboard = () => {
                 text-gray-500
                 mt-5
                 max-w-2xl
-                mx-auto
                 leading-relaxed
               "
             >
-              Professional enterprise
-              document management system
-              for secure document handling.
+              Securely manage internal
+              company files, reports,
+              spreadsheets and enterprise
+              documents in one centralized
+              platform.
             </p>
 
           </section>
 
-          {/* SEARCH */}
-          <div className="mt-8 flex justify-center">
+          {/* GRID */}
 
-            <div className="w-full max-w-4xl">
+          <section
+            className="
+              grid
+              grid-cols-1
+              xl:grid-cols-[1.6fr_0.9fr]
+              gap-8
+              mt-8
+            "
+          >
 
-              <SearchBar
-                search={search}
-                setSearch={setSearch}
-              />
+            {/* LEFT */}
+
+            <div className="space-y-8">
+
+              {/* DOCUMENTS */}
+
+              <div
+                className="
+                  card
+                  p-8
+                  fade-in
+                "
+              >
+
+                <div
+                  className="
+                    flex
+                    items-center
+                    justify-between
+                    mb-6
+                  "
+                >
+
+                  <div>
+
+                    <h2
+                      className="
+                        text-2xl
+                        font-semibold
+                      "
+                    >
+                      Company Documents
+                    </h2>
+
+                    <p
+                      className="
+                        text-gray-500
+                        mt-1
+                      "
+                    >
+                      Recent enterprise files
+                    </p>
+
+                  </div>
+
+                  <button
+                    className="
+                      primary-btn
+                    "
+                  >
+                    View All
+                  </button>
+
+                </div>
+
+                {/* TABLE */}
+
+                <div className="space-y-4">
+
+                  {documents.map((doc,index)=>(
+
+                    <div
+                      key={index}
+                      className="
+                        border
+                        border-gray-100
+                        rounded-2xl
+                        p-5
+                        flex
+                        items-center
+                        justify-between
+                        hover-lift
+                        hover:shadow-lg
+                      "
+                    >
+
+                      <div
+                        className="
+                          flex
+                          items-center
+                          gap-5
+                        "
+                      >
+
+                        <div
+                          className="
+                            w-14
+                            h-14
+                            rounded-2xl
+                            bg-blue-50
+                            text-blue-600
+                            flex
+                            items-center
+                            justify-center
+                          "
+                        >
+
+                          <FileText size={22}/>
+
+                        </div>
+
+                        <div>
+
+                          <h3
+                            className="
+                              font-semibold
+                              text-lg
+                            "
+                          >
+                            {doc.name}
+                          </h3>
+
+                          <p
+                            className="
+                              text-gray-400
+                              mt-1
+                              text-sm
+                            "
+                          >
+                            {doc.type}
+                            {" • "}
+                            {doc.size}
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                      <button
+                        className="
+                          primary-btn
+                        "
+                      >
+                        Open
+                      </button>
+
+                    </div>
+
+                  ))}
+
+                </div>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* RIGHT */}
 
-          {/* UPLOAD */}
-          <div className="mt-8 flex justify-center">
+            <div className="space-y-8">
 
-            <div className="w-full max-w-4xl">
+              {/* ACTIVITY */}
 
-              <UploadZone
-                onUpload={handleUpload}
-              />
+              <div
+                className="
+                  card
+                  p-8
+                  fade-in
+                "
+              >
+
+                <h2
+                  className="
+                    text-xl
+                    font-semibold
+                    mb-6
+                  "
+                >
+                  Recent Activity
+                </h2>
+
+                <div className="space-y-4">
+
+                  {[
+                    "Manufacturing report updated",
+                    "Excel file downloaded",
+                    "New project document uploaded",
+                  ].map((item,index)=>(
+
+                    <div
+                      key={index}
+                      className="
+                        p-4
+                        rounded-2xl
+                        bg-gray-50
+                        text-sm
+                        text-gray-600
+                      "
+                    >
+                      {item}
+                    </div>
+
+                  ))}
+
+                </div>
+
+              </div>
+
+              {/* QUICK ACCESS */}
+
+              <div
+                className="
+                  card
+                  p-8
+                  fade-in
+                "
+              >
+
+                <h2
+                  className="
+                    text-xl
+                    font-semibold
+                    mb-6
+                  "
+                >
+                  Quick Access
+                </h2>
+
+                <div className="space-y-4">
+
+                  {[
+                    "PDF Reports",
+                    "Excel Sheets",
+                    "Project Files",
+                    "Automation Docs",
+                  ].map((item,index)=>(
+
+                    <button
+                      key={index}
+                      className="
+                        w-full
+                        h-14
+                        rounded-2xl
+                        border
+                        border-gray-200
+                        hover:bg-gray-50
+                        text-left
+                        px-5
+                      "
+                    >
+                      {item}
+                    </button>
+
+                  ))}
+
+                </div>
+
+              </div>
 
             </div>
 
-          </div>
-
-          {/* TABLE */}
-          <div className="mt-8">
-
-            <DocumentTable
-              documents={filteredDocs}
-              onSelect={setSelectedDoc}
-            />
-
-          </div>
+          </section>
 
         </div>
 
       </main>
-
-      {/* VIEWER */}
-      <DocumentViewer
-        selectedDoc={selectedDoc}
-        onClose={() =>
-          setSelectedDoc(null)
-        }
-      />
-
-      {/* SUPPORT */}
-      <SupportModal
-        showSupport={showSupport}
-        setShowSupport={setShowSupport}l
-      />
 
     </div>
   );
