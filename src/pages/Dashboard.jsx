@@ -1,5 +1,10 @@
 import { useRef, useState } from "react";
 
+import * as pdfjsLib from "pdfjs-dist";
+import pdfWorker from "pdfjs-dist/build/pdf.worker.min?url";
+
+import mammoth from "mammoth";
+
 import {
   Search,
   Bell,
@@ -11,37 +16,139 @@ import {
   X,
 } from "lucide-react";
 
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  pdfWorker;
+
 const Dashboard = () => {
 
-  const [dark,setDark] = useState(false);
+  // STATES
 
-  const [supportOpen,setSupportOpen] =
+  const [dark, setDark] =
     useState(false);
 
-  const [documents,setDocuments] =
-    useState([
-      {
-        name:"Manufacturing_Report.pdf",
-        type:"PDF",
-        size:"2.4 MB",
-        url:"#",
-      },
-      {
-        name:"Automation_Process.docx",
-        type:"WORD",
-        size:"1.8 MB",
-        url:"#",
-      },
-    ]);
+  const [supportOpen, setSupportOpen] =
+    useState(false);
 
-  const fileInputRef = useRef(null);
+  const [search, setSearch] =
+    useState("");
 
-  // FILE UPLOAD
+  const [documents, setDocuments] =
+    useState([]);
 
-  const handleFiles = (files) => {
+  const [filteredDocs, setFilteredDocs] =
+    useState([]);
 
-    const uploadedFiles =
-      Array.from(files).map((file)=>({
+  const [selectedFile, setSelectedFile] =
+    useState(null);
+
+  const [previewOpen, setPreviewOpen] =
+    useState(false);
+
+  const fileInputRef = useRef();
+
+  // READ FILE CONTENT
+
+  const readFileContent = async(file) => {
+
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    try {
+
+      // PDF
+
+      if(extension === "pdf") {
+
+        const arrayBuffer =
+          await file.arrayBuffer();
+
+        const pdf =
+          await pdfjsLib.getDocument({
+            data:arrayBuffer,
+          }).promise;
+
+        let text = "";
+
+        for(
+          let i = 1;
+          i <= pdf.numPages;
+          i++
+        ){
+
+          const page =
+            await pdf.getPage(i);
+
+          const content =
+            await page.getTextContent();
+
+          const strings =
+            content.items.map(
+              (item)=>item.str
+            );
+
+          text += strings.join(" ");
+
+        }
+
+        return text;
+
+      }
+
+      // TXT
+
+      if(extension === "txt") {
+
+        return await file.text();
+
+      }
+
+      // DOCX
+
+      if(extension === "docx") {
+
+        const arrayBuffer =
+          await file.arrayBuffer();
+
+        const result =
+          await mammoth.extractRawText({
+            arrayBuffer,
+          });
+
+        return result.value;
+
+      }
+
+      return "";
+
+    }
+
+    catch(err){
+
+      console.log(err);
+
+      return "";
+
+    }
+
+  };
+
+  // IMPORT FILES
+
+  const handleFiles = async(files) => {
+
+    const processedFiles = [];
+
+    for(
+      const file of Array.from(files)
+    ){
+
+      const content =
+        await readFileContent(file);
+
+      processedFiles.push({
 
         name:file.name,
 
@@ -50,17 +157,69 @@ const Dashboard = () => {
           .pop()
           .toUpperCase(),
 
-        size:`${(file.size / 1024 / 1024)
-          .toFixed(2)} MB`,
+        size:`${(
+          file.size /
+          1024 /
+          1024
+        ).toFixed(2)} MB`,
 
         url:URL.createObjectURL(file),
 
-      }));
+        content,
+
+      });
+
+    }
 
     setDocuments((prev)=>[
-      ...uploadedFiles,
+      ...processedFiles,
       ...prev,
     ]);
+
+    setFilteredDocs((prev)=>[
+      ...processedFiles,
+      ...prev,
+    ]);
+
+  };
+
+  // SEARCH
+
+  const handleSearch = (value) => {
+
+    setSearch(value);
+
+    if(value.trim() === ""){
+
+      setFilteredDocs(documents);
+
+      return;
+
+    }
+
+    const filtered =
+      documents.filter((doc)=>{
+
+        const keyword =
+          value.toLowerCase();
+
+        return (
+
+          doc.name
+            .toLowerCase()
+            .includes(keyword)
+
+          ||
+
+          doc.content
+            ?.toLowerCase()
+            .includes(keyword)
+
+        );
+
+      });
+
+    setFilteredDocs(filtered);
 
   };
 
@@ -70,7 +229,9 @@ const Dashboard = () => {
 
     e.preventDefault();
 
-    handleFiles(e.dataTransfer.files);
+    handleFiles(
+      e.dataTransfer.files
+    );
 
   };
 
@@ -78,17 +239,9 @@ const Dashboard = () => {
 
   const openFile = (doc) => {
 
-    if(doc.url !== "#"){
+    setSelectedFile(doc);
 
-      window.open(doc.url,"_blank");
-
-    }else{
-
-      alert(
-        "Demo file. Upload a real file to open preview."
-      );
-
-    }
+    setPreviewOpen(true);
 
   };
 
@@ -104,13 +257,15 @@ const Dashboard = () => {
           ?
           "bg-[#0f172a] text-white"
           :
-          ""
+          "text-gray-800"
         }
       `}
       style={{
-        background: dark
-          ? "#0f172a"
-          : "linear-gradient(90deg,#eefbf3 0%,#fff6ec 100%)",
+        background:dark
+          ?
+          "#0f172a"
+          :
+          "linear-gradient(90deg,#eefbf3 0%,#fff6ec 100%)",
       }}
     >
 
@@ -137,7 +292,7 @@ const Dashboard = () => {
           className="
             max-w-7xl
             mx-auto
-            px-8
+            px-6
             h-20
             flex
             items-center
@@ -168,8 +323,6 @@ const Dashboard = () => {
                 items-center
                 justify-center
                 font-bold
-                text-base
-                shadow-md
               "
             >
               H
@@ -179,9 +332,8 @@ const Dashboard = () => {
 
               <h1
                 className="
-                  text-lg
+                  text-base
                   font-semibold
-                  tracking-tight
                 "
               >
                 HIROTEC INDIA
@@ -216,29 +368,47 @@ const Dashboard = () => {
             "
           >
 
-            {/* DARK MODE */}
+            {/* IMPORT */}
+
+            <button
+              onClick={() =>
+                fileInputRef.current.click()
+              }
+              className="
+                h-10
+                px-5
+                rounded-xl
+                bg-green-500
+                text-white
+                text-sm
+                font-medium
+                flex
+                items-center
+                gap-2
+              "
+            >
+
+              <UploadCloud size={16}/>
+
+              Import Drive
+
+            </button>
+
+            {/* DARK */}
 
             <button
               onClick={() =>
                 setDark(!dark)
               }
-              className={`
+              className="
                 w-10
                 h-10
                 rounded-xl
+                bg-white/10
                 flex
                 items-center
                 justify-center
-                transition-all
-                hover:scale-105
-                ${
-                  dark
-                  ?
-                  "bg-white/10 hover:bg-white/20"
-                  :
-                  "bg-white border border-white/60 shadow-sm"
-                }
-              `}
+              "
             >
 
               {
@@ -259,17 +429,11 @@ const Dashboard = () => {
               }
               className="
                 h-10
-                px-4
+                px-5
                 rounded-xl
-                bg-gradient-to-r
-                from-orange-400
-                to-orange-500
+                bg-orange-500
                 text-white
                 text-sm
-                font-medium
-                shadow-md
-                hover:scale-[1.02]
-                transition-all
               "
             >
               Support
@@ -281,22 +445,13 @@ const Dashboard = () => {
               onClick={() =>
                 window.location.reload()
               }
-              className={`
+              className="
                 h-10
-                px-4
+                px-5
                 rounded-xl
+                bg-red-500/20
                 text-sm
-                font-medium
-                transition-all
-                hover:scale-[1.02]
-                ${
-                  dark
-                  ?
-                  "bg-red-500/20 hover:bg-red-500/30"
-                  :
-                  "bg-white border border-white/50 shadow-sm"
-                }
-              `}
+              "
             >
 
               <div
@@ -331,65 +486,10 @@ const Dashboard = () => {
         "
       >
 
-        {/* HERO */}
-
-        <section
-          className={`
-            rounded-[28px]
-            p-10
-            text-center
-            border
-            backdrop-blur-xl
-            shadow-[0_20px_60px_rgba(15,23,42,0.06)]
-            ${
-              dark
-              ?
-              "bg-[#111827] border-white/10"
-              :
-              "bg-white/70 border-white/50"
-            }
-          `}
-        >
-
-          <h1
-            className="
-              text-4xl
-              font-bold
-              leading-tight
-            "
-          >
-            Smart Enterprise
-            <br />
-            Document Management
-          </h1>
-
-          <p
-            className={`
-              max-w-2xl
-              mx-auto
-              mt-4
-              text-sm
-              leading-7
-              ${
-                dark
-                ?
-                "text-gray-400"
-                :
-                "text-gray-600"
-              }
-            `}
-          >
-            Securely manage company documents
-            with modern enterprise technology.
-          </p>
-
-        </section>
-
         {/* SEARCH */}
 
         <section
           className="
-            mt-8
             flex
             justify-center
           "
@@ -398,56 +498,49 @@ const Dashboard = () => {
           <div
             className={`
               w-full
-              max-w-2xl
+              max-w-3xl
               h-14
-              rounded-xl
-              border
+              rounded-2xl
+              px-5
               flex
               items-center
-              px-4
               gap-3
-              backdrop-blur-xl
-              shadow-md
+              border
               ${
                 dark
                 ?
                 "bg-[#111827] border-white/10"
                 :
-                "bg-white/80 border-white/50"
+                "bg-white"
               }
             `}
           >
 
-            <Search
-              size={18}
-              className="
-                text-gray-400
-              "
-            />
+            <Search size={18}/>
 
             <input
               type="text"
-              placeholder="Search enterprise documents..."
+              placeholder="Search file name or document content..."
+              value={search}
+              onChange={(e)=>
+                handleSearch(
+                  e.target.value
+                )
+              }
               className="
                 flex-1
                 bg-transparent
                 outline-none
-                text-sm
               "
             />
 
-            <Bell
-              size={16}
-              className="
-                text-gray-400
-              "
-            />
+            <Bell size={17}/>
 
           </div>
 
         </section>
 
-        {/* DRAG DROP */}
+        {/* IMPORT */}
 
         <section className="mt-10">
 
@@ -457,14 +550,11 @@ const Dashboard = () => {
               e.preventDefault()
             }
             className={`
-              rounded-[28px]
+              rounded-[30px]
               border-2
               border-dashed
               p-12
               text-center
-              backdrop-blur-xl
-              hover:scale-[1.01]
-              transition-all
               ${
                 dark
                 ?
@@ -475,40 +565,22 @@ const Dashboard = () => {
             `}
           >
 
-            <div
+            <UploadCloud
+              size={40}
               className="
-                flex
-                justify-center
-                mb-5
+                mx-auto
+                text-green-500
               "
-            >
-
-              <div
-                className="
-                  w-20
-                  h-20
-                  rounded-full
-                  bg-green-100
-                  text-green-600
-                  flex
-                  items-center
-                  justify-center
-                "
-              >
-
-                <UploadCloud size={32}/>
-
-              </div>
-
-            </div>
+            />
 
             <h2
               className="
                 text-2xl
                 font-semibold
+                mt-5
               "
             >
-              Drag & Drop Files
+              Import Entire Drive
             </h2>
 
             <p
@@ -518,17 +590,20 @@ const Dashboard = () => {
                 text-gray-500
               "
             >
-              Upload PDFs, Word,
-              Excel and PPT files
+              PDF, DOCX, TXT, Images
             </p>
 
             <input
               type="file"
               multiple
+              webkitdirectory="true"
+              directory=""
               ref={fileInputRef}
               className="hidden"
               onChange={(e)=>
-                handleFiles(e.target.files)
+                handleFiles(
+                  e.target.files
+                )
               }
             />
 
@@ -538,21 +613,14 @@ const Dashboard = () => {
               }
               className="
                 mt-6
-                h-10
+                h-11
                 px-6
                 rounded-xl
-                bg-gradient-to-r
-                from-green-500
-                to-green-600
+                bg-green-500
                 text-white
-                text-sm
-                font-medium
-                shadow-md
-                hover:scale-[1.02]
-                transition-all
               "
             >
-              Browse Files
+              Browse Drive
             </button>
 
           </div>
@@ -563,38 +631,11 @@ const Dashboard = () => {
 
         <section className="mt-10">
 
-          <div className="mb-5">
-
-            <h2
-              className="
-                text-2xl
-                font-semibold
-              "
-            >
-              Company Documents
-            </h2>
-
-            <p
-              className="
-                mt-1
-                text-sm
-                text-gray-500
-              "
-            >
-              Secure enterprise file access
-            </p>
-
-          </div>
-
-          {/* TABLE */}
-
           <div
             className={`
               rounded-[28px]
               overflow-hidden
-              backdrop-blur-xl
               border
-              shadow-[0_20px_60px_rgba(15,23,42,0.06)]
               ${
                 dark
                 ?
@@ -605,18 +646,15 @@ const Dashboard = () => {
             `}
           >
 
-            {/* HEAD */}
-
             <div
               className="
                 grid
                 grid-cols-4
                 px-6
                 py-4
+                border-b
                 text-xs
                 font-semibold
-                border-b
-                text-gray-500
               "
             >
 
@@ -627,22 +665,128 @@ const Dashboard = () => {
 
             </div>
 
-            {/* ROWS */}
+            {
+              filteredDocs.map((doc,index)=>(
 
-            {documents.map((doc,index)=>(
+                <div
+                  key={index}
+                  className="
+                    grid
+                    grid-cols-4
+                    items-center
+                    px-6
+                    py-5
+                    border-b
+                  "
+                >
+
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-3
+                    "
+                  >
+
+                    <FileText size={18}/>
+
+                    <h3
+                      className="
+                        text-sm
+                        font-medium
+                      "
+                    >
+                      {doc.name}
+                    </h3>
+
+                  </div>
+
+                  <div>{doc.type}</div>
+
+                  <div>{doc.size}</div>
+
+                  <div>
+
+                    <button
+                      onClick={() =>
+                        openFile(doc)
+                      }
+                      className="
+                        h-10
+                        px-5
+                        rounded-xl
+                        bg-green-500
+                        text-white
+                        text-sm
+                      "
+                    >
+                      Preview
+                    </button>
+
+                  </div>
+
+                </div>
+
+              ))
+            }
+
+          </div>
+
+        </section>
+
+      </main>
+
+      {/* PREVIEW */}
+
+      {
+        previewOpen &&
+        selectedFile && (
+
+          <div
+            className="
+              fixed
+              inset-0
+              bg-black/50
+              flex
+              items-center
+              justify-center
+              z-50
+              p-5
+            "
+          >
+
+            <div
+              className="
+                w-full
+                max-w-5xl
+                h-[85vh]
+                bg-white
+                rounded-[30px]
+                overflow-hidden
+                flex
+                flex-col
+              "
+            >
 
               <div
-                key={index}
                 className="
-                  grid
-                  grid-cols-4
+                  h-16
+                  border-b
                   px-6
-                  py-5
+                  flex
                   items-center
-                  transition-all
-                  hover:bg-white/40
+                  justify-between
                 "
               >
+
+                <h2
+                  className="
+                    text-sm
+                    font-semibold
+                  "
+                >
+                  {selectedFile.name}
+                </h2>
 
                 <div
                   className="
@@ -652,255 +796,121 @@ const Dashboard = () => {
                   "
                 >
 
-                  <div
+                  <a
+                    href={selectedFile.url}
+                    download={selectedFile.name}
+                    className="
+                      h-10
+                      px-5
+                      rounded-xl
+                      bg-green-500
+                      text-white
+                      text-sm
+                      flex
+                      items-center
+                    "
+                  >
+                    Download
+                  </a>
+
+                  <button
+                    onClick={() =>
+                      setPreviewOpen(false)
+                    }
                     className="
                       w-10
                       h-10
                       rounded-xl
-                      bg-green-100
-                      text-green-600
+                      border
                       flex
                       items-center
                       justify-center
                     "
                   >
 
-                    <FileText size={18}/>
+                    <X size={16}/>
 
-                  </div>
-
-                  <h3
-                    className="
-                      font-medium
-                      text-sm
-                    "
-                  >
-                    {doc.name}
-                  </h3>
-
-                </div>
-
-                <div className="text-sm">
-                  {doc.type}
-                </div>
-
-                <div className="text-sm">
-                  {doc.size}
-                </div>
-
-                <div>
-
-                  <button
-                    onClick={() =>
-                      openFile(doc)
-                    }
-                    className="
-                      h-9
-                      px-4
-                      rounded-lg
-                      bg-gradient-to-r
-                      from-green-500
-                      to-green-600
-                      text-white
-                      text-sm
-                      font-medium
-                      shadow-sm
-                      hover:scale-[1.02]
-                      transition-all
-                    "
-                  >
-                    Open File
                   </button>
 
                 </div>
 
               </div>
 
-            ))}
+              <div
+                className="
+                  flex-1
+                  bg-gray-100
+                  p-5
+                  overflow-auto
+                "
+              >
 
-          </div>
+                {
+                  (
+                    selectedFile.type === "PNG" ||
+                    selectedFile.type === "JPG" ||
+                    selectedFile.type === "JPEG"
+                  ) && (
 
-        </section>
+                    <img
+                      src={selectedFile.url}
+                      alt=""
+                      className="
+                        max-h-full
+                        mx-auto
+                        rounded-2xl
+                      "
+                    />
 
-      </main>
+                  )
+                }
 
-      {/* SUPPORT MODAL */}
+                {
+                  selectedFile.type === "PDF" && (
 
-      {supportOpen && (
+                    <iframe
+                      src={selectedFile.url}
+                      title="preview"
+                      className="
+                        w-full
+                        h-full
+                        rounded-2xl
+                        bg-white
+                      "
+                    />
 
-        <div
-          className="
-            fixed
-            inset-0
-            bg-black/40
-            backdrop-blur-sm
-            flex
-            items-center
-            justify-center
-            z-50
-            p-5
-          "
-        >
+                  )
+                }
 
-          <div
-            className={`
-              w-full
-              max-w-md
-              rounded-[28px]
-              p-8
-              relative
-              shadow-[0_20px_60px_rgba(15,23,42,0.15)]
-              ${
-                dark
-                ?
-                "bg-[#111827]"
-                :
-                "bg-white"
-              }
-            `}
-          >
+                {
+                  (
+                    selectedFile.type === "TXT" ||
+                    selectedFile.type === "DOCX"
+                  ) && (
 
-            {/* CLOSE */}
+                    <div
+                      className="
+                        bg-white
+                        rounded-2xl
+                        p-6
+                        whitespace-pre-wrap
+                        text-sm
+                      "
+                    >
+                      {selectedFile.content}
+                    </div>
 
-            <button
-              onClick={() =>
-                setSupportOpen(false)
-              }
-              className="
-                absolute
-                right-4
-                top-4
-                w-8
-                h-8
-                rounded-full
-                hover:bg-gray-100
-                flex
-                items-center
-                justify-center
-              "
-            >
-
-              <X size={16}/>
-
-            </button>
-
-            <h2
-              className="
-                text-2xl
-                font-semibold
-                mb-2
-              "
-            >
-              Support Details
-            </h2>
-
-            <p
-              className="
-                text-sm
-                text-gray-500
-                mb-6
-                leading-6
-              "
-            >
-              Contact the HIROTEC Support Team
-              for technical assistance.
-            </p>
-
-            <div className="space-y-5">
-
-              <div>
-
-                <p className="text-xs text-gray-400">
-                  Developer
-                </p>
-
-                <h3 className="text-sm font-medium mt-1">
-                  JOHN DIVINE MATHEW J
-                </h3>
-
-              </div>
-
-              <div>
-
-                <p className="text-xs text-gray-400">
-                  Email
-                </p>
-
-                <h3 className="text-sm font-medium mt-1">
-                  mathewdivine95@gmail.com
-                </h3>
-
-              </div>
-
-              <div>
-
-                <p className="text-xs text-gray-400">
-                  Phone & WhatsApp
-                </p>
-
-                <h3 className="text-sm font-medium mt-1">
-                  +91 9626749641
-                </h3>
-
-              </div>
-
-              <div>
-
-                <p className="text-xs text-gray-400">
-                  Department
-                </p>
-
-                <h3 className="text-sm font-medium mt-1">
-                  Automation Team
-                </h3>
-
-              </div>
-
-              <div>
-
-                <p className="text-xs text-gray-400">
-                  Working Hours
-                </p>
-
-                <h3 className="text-sm font-medium mt-1 leading-6">
-                  9:00 AM - 6:00 PM from Monday to Friday
-                  <br />
-                </h3>
+                  )
+                }
 
               </div>
 
             </div>
 
-            {/* CLOSE BUTTON */}
-
-            <button
-              onClick={() =>
-                setSupportOpen(false)
-              }
-              className="
-                mt-8
-                w-full
-                h-10
-                rounded-xl
-                bg-gradient-to-r
-                from-orange-400
-                to-orange-500
-                text-white
-                text-sm
-                font-medium
-                shadow-md
-                hover:scale-[1.01]
-                transition-all
-              "
-            >
-              Close
-            </button>
-
           </div>
 
-        </div>
-
-      )}
+        )
+      }
 
     </div>
 

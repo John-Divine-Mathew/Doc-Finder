@@ -1,52 +1,73 @@
+import React from "react";
+
 const SearchBar = ({
   search,
   setSearch,
+  handleSearch
 }) => {
 
   return (
+
     <div
       className="
-        glass
-        premium-border
-        soft-shadow
-        rounded-[28px]
-        p-4
+        w-full
+        flex
+        justify-center
       "
     >
 
       <div
         className="
-          flex
-          items-center
-          gap-4
+          w-full
+          max-w-4xl
+          relative
         "
       >
+
+        {/* SEARCH INPUT */}
 
         <input
           type="text"
           placeholder="Search company documents..."
           value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
+          onChange={(e)=>{
+
+            setSearch(
+              e.target.value
+            );
+
+            handleSearch(
+              e.target.value
+            );
+
+          }}
           className="
-            input-style
-            flex-1
+            w-full
+            h-14
+            px-6
+            rounded-2xl
+            bg-white/90
+            backdrop-blur-md
+            border
+            border-gray-200
+            shadow-sm
+            text-sm
+            text-gray-700
+            outline-none
+            transition-all
+            duration-300
+            focus:ring-4
+            focus:ring-blue-100
+            focus:border-blue-400
           "
         />
-
-        <button
-          className=" 
-            primary-btn
-          "
-        >
-          Search
-        </button>
 
       </div>
 
     </div>
+
   );
+
 };
 
 export default SearchBar;
