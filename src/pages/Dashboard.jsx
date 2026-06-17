@@ -16,6 +16,8 @@ import {
   X,
 } from "lucide-react";
 
+import SupportModal from "../components/SupportModal";
+
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   pdfWorker;
 
@@ -911,6 +913,11 @@ const Dashboard = () => {
 
         )
       }
+
+      <SupportModal
+        showSupport={supportOpen}
+        setShowSupport={setSupportOpen}
+      />
 
     </div>
 
